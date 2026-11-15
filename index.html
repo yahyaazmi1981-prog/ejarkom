@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>إيجاركم الأردن | شقق للإيجار في عمّان من المالك مباشرة — صفر عمولة</title>
+  <meta name="description" content="منصة إيجاركم تربطك بصاحب الشقة في جميع مناطق عمّان مباشرة بدون سماسرة، صفر عمولة، صفر بدل معاينة، وبطاقة شفافية لكل شقة." />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="إيجاركم" />
+
+  <!-- Google Font: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Supabase JS v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+    }
+    .gold-card {
+      border: 2px solid #f59e0b;
+      background: linear-gradient(180deg, #fffbeb 0%, #ffffff 18%);
+    }
+    input[type="range"] {
+      accent-color: #0f766e;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20 md:pb-8">
+
+  <!-- Top Navigation Bar -->
+  <header class="glass-nav border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-xl bg-brand-700 text-white flex items-center justify-center font-black text-xl shadow-md">
+          إ
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-black text-xl text-slate-900 tracking-tight">إيجاركم</span>
+            <span class="text-[11px] font-bold bg-brand-100 text-brand-800 px-2 py-0.5 rounded-full">عمّان • المرحلة 1</span>
+          </div>
+          <p class="text-[11px] text-slate-500 -mt-1">من المالك مباشرة • صفر عمولة</p>
+        </div>
+      </div>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-2">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-bold transition">الرئيسية</button>
+        <button onclick="switchTab('listings')" id="nav-listings" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-bold transition">تصفح الشقق</button>
+        <button onclick="switchTab('landlord')" id="nav-landlord" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-bold transition">أضف شقتك</button>
+        <button onclick="switchTab('toolkit')" id="nav-toolkit" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-bold transition">حقيبة الحماية</button>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <!-- User Registration Status Pill -->
+        <div id="user-header-area"></div>
+
+        <button onclick="switchTab('listings')" class="bg-brand-700 hover:bg-brand-800 text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl shadow-sm transition">
+          ابحث عن شقة
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
+
+    <!-- ==================== TAB 1: HOME & WAITLIST ==================== -->
+    <section id="tab-home" class="tab-section space-y-8">
+      <!-- Hero Banner -->
+      <div class="bg-gradient-to-bl from-brand-800 via-brand-700 to-teal-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl space-y-4">
+          <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-full text-xs sm:text-sm font-bold text-amber-200">
+            <span>🛡️</span>
+            <span>المرحلة الأولى: جميع مناطق عمّان • حظر صارم للسماسرة</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-black leading-snug">
+            تعبت من دفع 20 دينار بس عشان تشوف شقة؟ و5% عمولة سمسار؟
+          </h1>
+          <p class="text-teal-100 text-sm sm:text-base leading-relaxed">
+            منصة <strong class="text-white">«إيجاركم»</strong> تربطك بصاحب الشقة في <strong class="text-amber-300">جميع مناطق وأحياء عمّان</strong> مباشرة — <strong class="text-amber-300">صفر عمولة، صفر بدل معاينة، وبطاقة شفافية</strong> تكشف لك وضع العدادات ورسوم الخدمات قبل أن تتحرك من مكانك.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="switchTab('listings')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-3 rounded-xl text-sm sm:text-base shadow-lg transition">
+              تصفح الشقق المباشرة الآن
+            </button>
+            <a href="#waitlist-box" class="bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold px-5 py-3 rounded-xl text-sm sm:text-base transition">
+              سجّل حسابك مجاناً الآن
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Savings Calculator -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-3 flex-1">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full">حاسبة التوفير الفورية</span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900">احسب كم رح توفّر لما تستأجر بدون سمسار:</h2>
+            <p class="text-sm text-slate-600">حرّك المؤشر لاختيار الإيجار الشهري المتوقع للشقة:</p>
+            <div class="pt-2">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-bold text-slate-600">الإيجار الشهري:</span>
+                <span class="text-2xl font-black text-brand-700"><span id="calc-rent">300</span> دينار / شهرياً</span>
+              </div>
+              <input type="range" id="rent-slider" min="150" max="1000" step="10" value="300" oninput="updateSavings()" class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer" />
+              <div class="flex justify-between text-xs text-slate-400 mt-1">
+                <span>150 دينار</span>
+                <span>500 دينار</span>
+                <span>1000 دينار</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 text-center md:w-72 shrink-0 space-y-2">
+            <p class="text-xs font-bold text-emerald-800">المبلغ الذي يبقى في جيبك:</p>
+            <div class="text-4xl font-black text-emerald-700"><span id="calc-total">200</span> <span class="text-lg">دينار</span></div>
+            <p class="text-xs text-emerald-700 leading-relaxed">
+              (<span id="calc-commission">180</span> د. عمولة مكتب 5% + 20 د. بدل معاينة)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Value Proposition Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl font-black">🚫</div>
+          <h3 class="font-extrabold text-lg text-slate-900">حظر صارم للسماسرة</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            فحص مسبق لأرقام المكاتب العقارية، تسجيل موثّق للمستأجرين، وزر تبليغ فوري يوقف أي معلن يطلب 15 أو 20 ديناراً للمعاينة.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center text-xl font-black">📋</div>
+          <h3 class="font-extrabold text-lg text-slate-900">بطاقة الشفافية الإلزامية</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            اعرف قبل أن تتحرك: هل عداد الكهرباء والمياه مستقل؟ كم رسوم الخدمات الشهرية؟ ما نوع التدفئة؟ وهل يوجد خزان ومضخة؟
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-black">⭐</div>
+          <h3 class="font-extrabold text-lg text-slate-900">شقق موثّقة ميدانياً</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            زيارة فريقنا للشقة وتصويرها ميدانياً يمنح المالك أولوية ظهور مستمرة حتى التأجير، ويمنحك ثقة كاملة بالمواصفات.
+          </p>
+        </div>
+      </div>
+
+      <!-- Rollout Phases Banner -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-2xl bg-brand-50 border border-brand-200 flex items-start gap-3">
+          <span class="text-2xl">📍</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-black text-brand-900 text-base">المرحلة الأولى (مفعّلة الآن)</h3>
+              <span class="text-[11px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full">نشط</span>
+            </div>
+            <p class="text-xs sm:text-sm text-brand-800 mt-1 leading-relaxed">
+              تغطي <strong>جميع مناطق وأحياء العاصمة عمّان</strong> (الشمالية، الغربية، الوسطى، الشرقية، والجنوبية).
+            </p>
+          </div>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+          <span class="text-2xl">🗺️</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-black text-slate-800 text-base">المرحلة الثانية (قريباً)</h3>
+              <span class="text-[11px] font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">التوسع القادم</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+              التوسع ليشمل <strong>إربد، الزرقاء، البلقاء، مأدبا، العقبة</strong> وباقي محافظات المملكة.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Waitlist / Account Registration Form -->
+      <div id="waitlist-box" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md">
+        <div class="max-w-xl mx-auto">
+          <div class="text-center space-y-2 mb-6">
+            <span class="text-xs font-extrabold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">التسجيل مجاني 100% — يتيح لك كشف أرقام الملاك مباشرة</span>
+            <h2 class="text-2xl font-black text-slate-900">سجّل حسابك الآن مجاناً</h2>
+            <p class="text-sm text-slate-600">سجّل لمرة واحدة فقط لتتمكن من إظهار أرقام هواتف أصحاب الشقق واستلام تنبيهات الشقق الجديدة في منطقتك.</p>
+          </div>
+
+          <form id="waitlist-form" onsubmit="submitWaitlist(event)" class="space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <label class="cursor-pointer">
+                <input type="radio" name="wl_role" value="tenant" checked class="peer sr-only" />
+                <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-brand-700 peer-checked:bg-brand-50 text-center font-bold text-sm transition">
+                  🔍 أبحث عن شقة للإيجار
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="wl_role" value="landlord" class="peer sr-only" />
+                <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-brand-700 peer-checked:bg-brand-50 text-center font-bold text-sm transition">
+                  🏠 مالك لدي شقة للإيجار
+                </div>
+              </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">الاسم الأول *</label>
+                <input type="text" id="wl-name" required placeholder="مثال: أحمد العمري" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">رقم الواتساب *</label>
+                <input type="tel" id="wl-phone" required placeholder="079XXXXXXX" dir="ltr" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-right focus:outline-none focus:border-brand-700" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">المنطقة / الحي في عمّان *</label>
+                <select id="wl-area" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-700"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">الميزانية الشهرية المتوقعة</label>
+                <select id="wl-budget" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-700">
+                  <option value="أقل من 250 دينار">أقل من 250 دينار</option>
+                  <option value="250 - 350 دينار" selected>250 - 350 دينار</option>
+                  <option value="350 - 500 دينار">350 - 500 دينار</option>
+                  <option value="أكثر من 500 دينار">أكثر من 500 دينار</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" id="wl-submit-btn" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-black py-3.5 rounded-xl text-base shadow-md transition">
+              تسجيل وتفعيل الحساب مجاناً
+            </button>
+          </form>
+
+          <!-- Waitlist Success & Viral Share Box -->
+          <div id="waitlist-success" class="hidden bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-6 text-center space-y-4">
+            <div class="text-4xl">🎉</div>
+            <h3 class="text-xl font-black text-emerald-900">تم تفعيل حسابك بنجاح!</h3>
+            <p class="text-sm text-emerald-800">
+              يمكنك الآن تصفح الشقق وإظهار أرقام الملاك مباشرة مجاناً. ترتيبك في قائمة الأولوية هو <span id="wl-rank" class="font-black text-lg bg-white px-2.5 py-0.5 rounded-lg border border-emerald-200">#101</span>
+            </p>
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <button onclick="switchTab('listings')" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white font-black py-3 px-4 rounded-xl text-sm transition">
+                تصفح الشقق وإظهار الأرقام الآن
+              </button>
+              <button onclick="shareOnWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition">
+                مشاركة مع صديق عبر واتساب
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: TENANT BROWSE LISTINGS ==================== -->
+    <section id="tab-listings" class="tab-section hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900">شقق للإيجار في عمّان من المالك مباشرة</h2>
+          <p class="text-xs sm:text-sm text-slate-500">تصفح التفاصيل مجاناً — وسجّل لمرة واحدة لإظهار أرقام هواتف الملاك</p>
+        </div>
+        <button onclick="loadListings()" class="self-start sm:self-auto text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl transition">
+          🔄 تحديث القائمة
+        </button>
+      </div>
+
+      <!-- Registration Notice Banner for Guests -->
+      <div id="guest-listings-banner" class="hidden bg-amber-50 border border-amber-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-2.5">
+          <span class="text-xl">🔒</span>
+          <p class="text-xs sm:text-sm text-amber-950 leading-relaxed">
+            <strong>ملاحظة لحماية الملاك من السماسرة:</strong> أرقام هواتف أصحاب الشقق مخفية للزوار. اضغط على زر التواصل في أي شقة لتسجيل اسمك ورقمك <strong>(مجاناً ولمرة واحدة)</strong> وإظهار جميع الأرقام فوراً.
+          </p>
+        </div>
+        <button onclick="openQuickRegisterOnly()" class="shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs px-4 py-2.5 rounded-xl transition">
+          سجّل الآن مجاناً
+        </button>
+      </div>
+
+      <!-- Filters Bar -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">المنطقة / الحي (جميع مناطق عمّان)</label>
+          <select id="filter-area" onchange="applyFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">الفئة المناسبة</label>
+          <select id="filter-group" onchange="applyFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white">
+            <option value="all">الكل (عائلات / طلاب / موظفون)</option>
+            <option value="عائلات">عائلات</option>
+            <option value="طلاب">طلاب</option>
+            <option value="موظفون">موظفون</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">أقصى إيجار شهري (دينار)</label>
+          <select id="filter-max-rent" onchange="applyFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white">
+            <option value="99999">بدون حد أقصى</option>
+            <option value="250">حتى 250 دينار</option>
+            <option value="300">حتى 300 دينار</option>
+            <option value="350">حتى 350 دينار</option>
+            <option value="500">حتى 500 دينار</option>
+            <option value="800">حتى 800 دينار</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Listings Grid -->
+      <div id="listings-container" class="space-y-4">
+        <div class="text-center py-12 text-slate-500 font-bold">جاري تحميل الشقق المباشرة من قاعدة البيانات...</div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: LANDLORD ADD LISTING & 20 JOD PACKAGE ==================== -->
+    <section id="tab-landlord" class="tab-section hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-extrabold bg-brand-50 text-brand-700 px-3 py-1 rounded-full">بوابة أصحاب الشقق — المرحلة الأولى: جميع مناطق عمّان</span>
+          <h2 class="text-2xl font-black text-slate-900">أجّر شقتك لمستأجرين جادين مباشرة</h2>
+          <p class="text-sm text-slate-600">لا نطلب قوشان أو هوية عند التسجيل. انشر شقتك في أي منطقة داخل عمّان مجاناً خلال دقيقتين، أو اطلب زيارة فريقنا لتصويرها ومنحها أولوية ظهور دائمة.</p>
+        </div>
+
+        <!-- Package Comparison -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-lg text-slate-800">النشر المجاني</span>
+              <span class="font-black text-xl text-slate-700">0 دينار</span>
+            </div>
+            <ul class="text-xs sm:text-sm text-slate-600 space-y-1.5 pt-1">
+              <li>✅ نشر الإعلان مع بطاقة الشفافية مجاناً</li>
+              <li>✅ رقمك لا يظهر إلا للمستأجرين المسجلين</li>
+              <li>⏳ ظهور عادي حسب ترتيب الإضافة</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-2xl border-2 border-amber-400 bg-amber-50/60 space-y-2 relative">
+            <span class="absolute -top-3 left-4 bg-amber-500 text-white text-[11px] font-black px-3 py-0.5 rounded-full">الأكثر طلباً وسرعة في التأجير</span>
+            <div class="flex justify-between items-center">
+              <span class="font-black text-lg text-amber-950">باقة التصوير الميداني والإعلان المميز</span>
+              <span class="font-black text-xl text-amber-700">20 دينار <span class="text-xs font-bold">لمرة واحدة</span></span>
+            </div>
+            <ul class="text-xs sm:text-sm text-amber-950 space-y-1.5 pt-1">
+              <li>⭐ زيارة فريق إيجاركم للشقة وتصوير فيديو جولة حقيقية</li>
+              <li>⭐ شارة <strong>«موثّق ميدانياً»</strong> ترفع ثقة المستأجرين</li>
+              <li>⭐ <strong>أولوية ظهور مستمرة في أعلى النتائج حتى يتم تأجير شقتك</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Add Listing Form -->
+        <form id="add-listing-form" onsubmit="submitListing(event)" class="space-y-4 pt-2 border-t border-slate-200">
+          <h3 class="font-black text-lg text-slate-900">بيانات الشقة وبطاقة الشفافية الإلزامية</h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">عنوان الإعلان المختصر *</label>
+              <input type="text" id="l-title" required placeholder="مثال: شقة طابق ثاني 3 غرف نوم قرب دوار الواحة" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">المنطقة / الحي في عمّان *</label>
+              <select id="l-area" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">الإيجار الشهري (دينار) *</label>
+              <input type="number" id="l-rent" required min="50" max="5000" placeholder="300" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">مبلغ التأمين المسترد (دينار)</label>
+              <input type="number" id="l-deposit" min="0" max="5000" value="150" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">الفئة المطلوبة للسكن *</label>
+              <select id="l-group" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+                <option value="عائلات">عائلات</option>
+                <option value="طلاب / موظفون">طلاب / موظفون</option>
+                <option value="طلاب">طلاب فقط</option>
+                <option value="موظفون">موظفون فقط</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Mandatory Transparency Fields -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+            <p class="text-xs font-black text-brand-800">حقول بطاقة الشفافية (إلزامية لمنع الأسئلة المتكررة):</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">عداد الكهرباء والمياه *</label>
+                <select id="l-meters" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white">
+                  <option value="كهرباء ومياه مستقل">كهرباء ومياه مستقل</option>
+                  <option value="كهرباء مستقل / مياه مشترك">كهرباء مستقل / مياه مشترك</option>
+                  <option value="عدادات مشتركة">عدادات مشتركة</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">رسوم الخدمات الشهرية (مصعد/حارس) *</label>
+                <input type="text" id="l-fees" required placeholder="مثال: 15 دينار شهرياً أو مشمولة بالإيجار" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">نظام التدفئة والتبريد *</label>
+                <input type="text" id="l-heating" required placeholder="مثال: تدفئة مركزية / تأسيس مكيفات" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">خزانات المياه والمضخة *</label>
+                <input type="text" id="l-water" required placeholder="مثال: خزان 4 متر مستقل + مضخة" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">اسم المالك *</label>
+              <input type="text" id="l-owner" required placeholder="مثال: أبو محمد" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">رقم هاتف المالك (واتساب / اتصال) *</label>
+              <input type="tel" id="l-phone" required placeholder="079XXXXXXX" dir="ltr" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-right" />
+            </div>
+          </div>
+
+          <!-- Package Selection -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold text-slate-700">اختر نوع النشر:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="cursor-pointer">
+                <input type="radio" name="l_package" value="free" checked class="peer sr-only" />
+                <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-brand-700 peer-checked:bg-brand-50 text-sm font-bold transition">
+                  نشر مجاني (0 دينار)
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="l_package" value="featured" class="peer sr-only" />
+                <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-amber-500 peer-checked:bg-amber-50 text-sm font-bold text-amber-950 transition">
+                  ⭐ طلب تصوير ميداني وأولوية ظهور (20 دينار لمرة واحدة حتى التأجير)
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Anti-Broker Mandatory Pledge -->
+          <label class="flex items-start gap-2.5 p-3.5 rounded-xl bg-rose-50/70 border border-rose-200 cursor-pointer">
+            <input type="checkbox" id="l-pledge" required class="mt-1 w-4 h-4 accent-brand-700" />
+            <span class="text-xs text-slate-800 leading-relaxed">
+              <strong>إقرار المالك المباشر (إلزامي):</strong> أُقرّ بأنني المالك الفعلي لهذه الشقة (أو مفوّض من العائلة مباشرة دون صفة تجارية)، وأتعهد بعدم طلب أي مبلغ تحت مسمى (بدل معاينة) أو (عمولة مكتب) من المستأجر. أتفهم أن أي بلاغ موثق يثبت عكس ذلك سيؤدي لحظر رقمي نهائياً.
+            </span>
+          </label>
+
+          <button type="submit" id="l-submit-btn" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-black py-3.5 rounded-xl text-base shadow-md transition">
+            نشر الشقة الآن
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: TENANT PROTECTION TOOLKIT ==================== -->
+    <section id="tab-toolkit" class="tab-section hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <span class="text-xs font-extrabold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full">مجاني 100% لجميع المستأجرين</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-2">حقيبة حماية المستأجر في الأردن</h2>
+          <p class="text-sm text-slate-600">أدوات عملية تحميك أثناء معاينة الشقة وعند استلام المفتاح لضمان استرداد مبلغ التأمين.</p>
+        </div>
+
+        <!-- Tool 1: Viewing Checklist -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-lg text-slate-900">1. قائمة فحص المعاينة داخل الشقة</h3>
+            <span id="checklist-progress" class="text-xs font-black bg-brand-100 text-brand-800 px-2.5 py-1 rounded-lg">0 / 6 مفحوص</span>
+          </div>
+          <div class="space-y-2.5 text-sm">
+            <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-100">
+              <input type="checkbox" onchange="updateChecklist()" class="chk-item w-4 h-4 accent-brand-700" />
+              <span>فتح صنابير المياه (المطبخ والحمام) للتأكد من قوة ضغط المضخة والسخان</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-100">
+              <input type="checkbox" onchange="updateChecklist()" class="chk-item w-4 h-4 accent-brand-700" />
+              <span>فحص زوايا السقف والجدران الشمالية للتأكد من عدم وجود آثار رطوبة أو عفن</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-100">
+              <input type="checkbox" onchange="updateChecklist()" class="chk-item w-4 h-4 accent-brand-700" />
+              <span>تجربة إغلاق الشبابيك والأباجورات للتأكد من العزل الحراري والصوتي</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-100">
+              <input type="checkbox" onchange="updateChecklist()" class="chk-item w-4 h-4 accent-brand-700" />
+              <span>مطابقة رقم ساعة الكهرباء والمياه والتأكد من عدم وجود ذمم مالية سابقة</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-100">
+              <input type="checkbox" onchange="updateChecklist()" class="chk-item w-4 h-4 accent-brand-700" />
+              <span>فحص تغطية شبكة الهاتف والإنترنت (الفايبر) داخل الغرف</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-100">
+              <input type="checkbox" onchange="updateChecklist()" class="chk-item w-4 h-4 accent-brand-700" />
+              <span>السؤال عن موقف السيارة (الكراج) ورسوم خدمات العمارة الشهرية</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Tool 2: Move-in Condition Report -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-4 bg-amber-50/40">
+          <h3 class="font-black text-lg text-slate-900">2. توثيق ملاحظات استلام الشقة (لحفظ مبلغ التأمين)</h3>
+          <p class="text-xs sm:text-sm text-slate-600">
+            سجّل أي خدش أو عطل موجود مسبقاً يوم استلام المفتاح، وأرسله للمالك عبر واتساب بتاريخ اليوم ليكون حجة تحمي مبلغ التأمين عند الإخلاء:
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="text" id="rep-apt" placeholder="اسم العمارة / المنطقة" class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+            <input type="text" id="rep-deposit" placeholder="قيمة التأمين المدفوع (مثال: 150 دينار)" class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+          <textarea id="rep-notes" rows="3" placeholder="اكتب الملاحظات الموجودة عند الاستلام (مثال: خدش في باب المطبخ، أباجور غرفة النوم يحتاج صيانة، دهان الصالون بحالة جيدة)..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></textarea>
+          <button onclick="sendMoveInWhatsApp()" class="bg-brand-700 hover:bg-brand-800 text-white font-bold px-5 py-3 rounded-xl text-sm transition">
+            إرسال محضر الاستلام المؤرّخ عبر واتساب
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 glass-nav border-t border-slate-200 z-40 grid grid-cols-4 h-16">
+    <button onclick="switchTab('home')" id="mnav-home" class="mnav-btn flex flex-col items-center justify-center text-xs font-bold text-brand-700">
+      <span class="text-lg">🏠</span>
+      <span>الرئيسية</span>
+    </button>
+    <button onclick="switchTab('listings')" id="mnav-listings" class="mnav-btn flex flex-col items-center justify-center text-xs font-bold text-slate-500">
+      <span class="text-lg">🔍</span>
+      <span>الشقق</span>
+    </button>
+    <button onclick="switchTab('landlord')" id="mnav-landlord" class="mnav-btn flex flex-col items-center justify-center text-xs font-bold text-slate-500">
+      <span class="text-lg">➕</span>
+      <span>أضف شقتك</span>
+    </button>
+    <button onclick="switchTab('toolkit')" id="mnav-toolkit" class="mnav-btn flex flex-col items-center justify-center text-xs font-bold text-slate-500">
+      <span class="text-lg">🛡️</span>
+      <span>الحماية</span>
+    </button>
+  </nav>
+
+  <!-- ==================== MODAL 1: REGISTRATION GATE + PROTECTION SHIELD + PHONE REVEAL ==================== -->
+  <div id="contact-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <span id="modal-top-badge" class="inline-flex items-center gap-1.5 bg-brand-100 text-brand-900 text-xs font-black px-3 py-1 rounded-full">🔐 تسجيل مجاني لمرة واحدة</span>
+        <button onclick="closeModal('contact-modal')" class="text-slate-400 hover:text-slate-700 font-black text-lg">✕</button>
+      </div>
+
+      <!-- STEP 0: QUICK REGISTRATION GATE (Shown only if user is not registered yet) -->
+      <div id="shield-step-register" class="hidden space-y-4">
+        <div class="space-y-1.5">
+          <h3 class="text-lg font-black text-slate-900">سجّل بياناتك لإظهار رقم المالك مجاناً</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            لحماية أصحاب الشقق من السماسرة، نطلب منك تسجيل اسمك ورقم واتسابك <strong>مرة واحدة فقط (مجاناً 100%)</strong> لتظهر لك أرقام جميع الملاك مباشرة.
+          </p>
+        </div>
+        <form onsubmit="submitQuickRegister(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">الاسم الكامل *</label>
+            <input type="text" id="qreg-name" required placeholder="مثال: محمد الخطيب" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-700" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">رقم الواتساب الأردني *</label>
+            <input type="tel" id="qreg-phone" required placeholder="079XXXXXXX" dir="ltr" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-right focus:outline-none focus:border-brand-700" />
+          </div>
+          <button type="submit" id="qreg-submit-btn" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-black py-3.5 rounded-xl text-sm shadow-md transition">
+            تسجيل مجاني وإظهار رقم المالك الآن
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 1: PROTECTION SHIELD REMINDER -->
+      <div id="shield-step-1" class="hidden space-y-4">
+        <h3 class="text-lg font-black text-slate-900">تذكير مهم لحماية مالك:</h3>
+        <ul class="text-sm text-slate-700 space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <li>✅ هذا الإعلان منشور بصيغة <strong>«من المالك مباشرة — صفر عمولة»</strong>.</li>
+          <li>🚫 <strong>لا تدفع أي مبلغ مالي</strong> (لا 15 ولا 20 دينار) تحت مسمى «بدل معاينة» أو «حجز موعد» قبل زيارة الشقة ومقابلة المالك.</li>
+          <li>📢 إذا طلب المعلن أي رسوم معاينة، اضغط زر <strong>«تبليغ»</strong> فوراً لحظر حسابه.</li>
+        </ul>
+        <button onclick="revealLandlordContact()" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-black py-3 rounded-xl text-sm transition">
+          فهمت، أظهر رقم المالك الآن
+        </button>
+      </div>
+
+      <!-- STEP 2: REVEALED PHONE & WHATSAPP -->
+      <div id="shield-step-2" class="hidden space-y-4">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1">
+          <p class="text-xs text-emerald-700 font-bold">بيانات المالك المباشر</p>
+          <p id="modal-owner-name" class="text-lg font-black text-slate-900"></p>
+          <p id="modal-owner-phone" dir="ltr" class="text-xl font-black text-brand-700 tracking-wider"></p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <a id="modal-call-link" href="#" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-center text-sm transition">
+            📞 اتصال هاتفي
+          </a>
+          <a id="modal-wa-link" href="#" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl text-center text-sm transition">
+            💬 محادثة واتساب
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: REPORT BROKER ==================== -->
+  <div id="report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <span class="bg-rose-100 text-rose-800 text-xs font-black px-3 py-1 rounded-full">🚨 تبليغ فوري لحماية المستأجرين</span>
+        <button onclick="closeModal('report-modal')" class="text-slate-400 hover:text-slate-700 font-black text-lg">✕</button>
+      </div>
+      <h3 class="text-lg font-black text-slate-900">ساعدنا نحافظ على التطبيق نظيف من السماسرة</h3>
+      <form onsubmit="submitReport(event)" class="space-y-3">
+        <div class="space-y-2 text-sm">
+          <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 cursor-pointer">
+            <input type="radio" name="rep_reason" value="طلب مبلغ مالي لمعاينة الشقة (15-20 دينار)" checked class="accent-rose-600" />
+            <span>طلب مبلغ مالي لمعاينة الشقة (15–20 دينار)</span>
+          </label>
+          <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 cursor-pointer">
+            <input type="radio" name="rep_reason" value="المعلن سمسار أو مكتب عقاري وطلب عمولة" class="accent-rose-600" />
+            <span>المعلن سمسار أو مكتب عقاري وطلب عمولة</span>
+          </label>
+          <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 cursor-pointer">
+            <input type="radio" name="rep_reason" value="الشقة مؤجرة مسبقاً أو المواصفات غير مطابقة" class="accent-rose-600" />
+            <span>الشقة مؤجرة مسبقاً أو المواصفات غير مطابقة</span>
+          </label>
+        </div>
+        <textarea id="rep-extra-note" rows="2" placeholder="تفاصيل إضافية (اختياري)..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
+        <button type="submit" id="rep-submit-btn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl text-sm transition">
+          إرسال البلاغ وإخفاء الإعلان
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden bg-slate-900 text-white text-xs sm:text-sm font-bold px-5 py-3 rounded-2xl shadow-xl"></div>
+
+  <script>
+    // ==================== SUPABASE CONFIGURATION ====================
+    const SUPABASE_URL = 'https://rsklbuyhocqnormuvrbp.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_4CpK2BACEesATz-TIxr4GQ_7cMeuvYJ';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ==================== USER SESSION (LOCAL STORAGE) ====================
+    const USER_STORAGE_KEY = 'ejarkom_registered_user_v1';
+
+    function getRegisteredUser() {
+      try {
+        const raw = localStorage.getItem(USER_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setRegisteredUser(userObj) {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userObj));
+      updateUserUIState();
+    }
+
+    function logoutUser() {
+      localStorage.removeItem(USER_STORAGE_KEY);
+      updateUserUIState();
+      if (allListings.length) applyFilters();
+      showToast('تم تسجيل الخروج من الحساب.');
+    }
+
+    function updateUserUIState() {
+      const user = getRegisteredUser();
+      const headerArea = document.getElementById('user-header-area');
+      const guestBanner = document.getElementById('guest-listings-banner');
+
+      if (user) {
+        const firstName = escapeHtml(user.full_name.split(' ')[0]);
+        headerArea.innerHTML = `
+          <div class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>أهلاً، ${firstName}</span>
+            <button onclick="logoutUser()" title="تسجيل خروج" class="text-slate-400 hover:text-rose-600 mr-1 font-black">✕</button>
+          </div>
+        `;
+        if (guestBanner) guestBanner.classList.add('hidden');
+      } else {
+        headerArea.innerHTML = `
+          <button onclick="openQuickRegisterOnly()" class="inline-flex items-center gap-1 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-1.5 rounded-xl transition">
+            <span>👤</span>
+            <span>تسجيل مجاني</span>
+          </button>
+        `;
+        if (guestBanner) guestBanner.classList.remove('hidden');
+      }
+    }
+
+    // ==================== COMPLETE AMMAN AREAS (PHASE 1) ====================
+    const AMMAN_AREAS_GROUPS = [
+      {
+        label: 'شمال عمّان وضواحيها',
+        areas: [
+          'الجبيهة',
+          'شارع الجامعة الأردنية',
+          'تلاع العلي',
+          'ضاحية الرشيد',
+          'شفا بدران',
+          'أبو نصير',
+          'طبربور',
+          'ضاحية الأقصى',
+          'ضاحية الاستقلال',
+          'عرجان',
+          'المدينة الرياضية',
+          'طارق',
+          'الكمالية'
+        ]
+      },
+      {
+        label: 'غرب عمّان',
+        areas: [
+          'خلدا',
+          'دابوق',
+          'أم السماق',
+          'الصويفية',
+          'عبدون',
+          'دير غبار',
+          'أم أذينة',
+          'الرابية',
+          'الشميساني',
+          'الجندويل',
+          'الكرسي',
+          'البيادر / وادي السير',
+          'الرونق',
+          'الظهير',
+          'الديار',
+          'السهل',
+          'ضاحية الأمير راشد',
+          'ضاحية النخيل',
+          'الحمر',
+          'صويلح',
+          'بدر الجديدة',
+          'أبو السوس',
+          'عراق الأمير'
+        ]
+      },
+      {
+        label: 'وسط عمّان',
+        areas: [
+          'جبل عمّان (الدوار الأول - الثامن)',
+          'جبل اللويبدة',
+          'العبدلي',
+          'جبل الحسين',
+          'وسط البلد (المدينة)',
+          'وادي صقرة',
+          'راس العين',
+          'جبل الجوفة',
+          'جبل التاج',
+          'جبل النظيف',
+          'المهاجرين',
+          'وادي الحدادة',
+          'جبل القلعة'
+        ]
+      },
+      {
+        label: 'شرق عمّان',
+        areas: [
+          'ماركا الشمالية',
+          'ماركا الجنوبية',
+          'الهاشمي الشمالي',
+          'الهاشمي الجنوبي',
+          'النزهة',
+          'ضاحية الأمير حسن',
+          'جبل النصر',
+          'الأشرفية',
+          'الوحدات',
+          'القويسمة',
+          'أبو علندا',
+          'الجويدة',
+          'جبل الحديد',
+          'المنارة',
+          'حي عدن',
+          'بسمان',
+          'أحد'
+        ]
+      },
+      {
+        label: 'جنوب عمّان وطريق المطار',
+        areas: [
+          'مرج الحمام',
+          'المقابلين',
+          'البنيات',
+          'ضاحية الياسمين',
+          'حي نزال',
+          'الذراع',
+          'جبل الأخضر',
+          'جبل الزهور',
+          'خريبة السوق',
+          'جاوا',
+          'اليادودة',
+          'أم قصير',
+          'رجم عميش',
+          'حي الصحابة',
+          'طريق المطار',
+          'ضاحية الحاج حسن',
+          'ناعور',
+          'سحاب',
+          'الجيزة'
+        ]
+      }
+    ];
+
+    const PHASE_2_GOVERNORATES = [
+      'إربد (المرحلة الثانية قريباً)',
+      'الزرقاء (المرحلة الثانية قريباً)',
+      'البلقاء / السلط (المرحلة الثانية قريباً)',
+      'مأدبا (المرحلة الثانية قريباً)',
+      'العقبة (المرحلة الثانية قريباً)',
+      'الكرك / الطفيلة / معان (المرحلة الثانية قريباً)',
+      'جرش / عجلون / المفرق (المرحلة الثانية قريباً)'
+    ];
+
+    function populateAreaDropdowns() {
+      const wlSelect = document.getElementById('wl-area');
+      const filterSelect = document.getElementById('filter-area');
+      const landlordSelect = document.getElementById('l-area');
+
+      filterSelect.innerHTML = '<option value="all">جميع مناطق عمّان (80+ حي ومنطقة)</option>';
+      wlSelect.innerHTML = '';
+      landlordSelect.innerHTML = '';
+
+      AMMAN_AREAS_GROUPS.forEach(group => {
+        const og1 = document.createElement('optgroup');
+        og1.label = group.label;
+        const og2 = document.createElement('optgroup');
+        og2.label = group.label;
+        const og3 = document.createElement('optgroup');
+        og3.label = group.label;
+
+        group.areas.forEach(area => {
+          const opt1 = new Option(area, area);
+          const opt2 = new Option(area, area);
+          const opt3 = new Option(area, area);
+          og1.appendChild(opt1);
+          og2.appendChild(opt2);
+          og3.appendChild(opt3);
+        });
+
+        wlSelect.appendChild(og1);
+        filterSelect.appendChild(og2);
+        landlordSelect.appendChild(og3);
+      });
+
+      const ogPhase2 = document.createElement('optgroup');
+      ogPhase2.label = 'باقي المحافظات (المرحلة الثانية قريباً)';
+      PHASE_2_GOVERNORATES.forEach(gov => {
+        ogPhase2.appendChild(new Option(gov, gov));
+      });
+      wlSelect.appendChild(ogPhase2);
+    }
+
+    let allListings = [];
+    let selectedListing = null;
+    let reportingListingId = null;
+
+    // ==================== PWA MANIFEST SETUP ====================
+    (function setupPWA() {
+      const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#0f766e"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-weight="900" font-size="280" fill="#ffffff">إ</text></svg>`;
+      const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(iconSvg)));
+      const manifest = {
+        name: 'إيجاركم الأردن - شقق في عمّان من المالك مباشرة',
+        short_name: 'إيجاركم',
+        start_url: '.',
+        display: 'standalone',
+        background_color: '#f8fafc',
+        theme_color: '#0f766e',
+        icons: [{ src: iconUrl, sizes: '512x512', type: 'image/svg+xml' }]
+      };
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+      document.head.appendChild(link);
+    })();
+
+    // ==================== NAVIGATION ====================
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-brand-50', 'text-brand-800');
+        btn.classList.add('text-slate-600');
+      });
+      const activeDesktop = document.getElementById('nav-' + tabName);
+      if (activeDesktop) {
+        activeDesktop.classList.add('bg-brand-50', 'text-brand-800');
+        activeDesktop.classList.remove('text-slate-600');
+      }
+
+      document.querySelectorAll('.mnav-btn').forEach(btn => {
+        btn.classList.remove('text-brand-700');
+        btn.classList.add('text-slate-500');
+      });
+      const activeMobile = document.getElementById('mnav-' + tabName);
+      if (activeMobile) {
+        activeMobile.classList.add('text-brand-700');
+        activeMobile.classList.remove('text-slate-500');
+      }
+
+      if (tabName === 'listings') {
+        updateUserUIState();
+        loadListings();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 4000);
+    }
+
+    // ==================== SAVINGS CALCULATOR ====================
+    function updateSavings() {
+      const rent = parseInt(document.getElementById('rent-slider').value, 10);
+      const commission = Math.round(rent * 12 * 0.05);
+      const total = commission + 20;
+      document.getElementById('calc-rent').textContent = rent;
+      document.getElementById('calc-commission').textContent = commission;
+      document.getElementById('calc-total').textContent = total;
+    }
+
+    // ==================== WAITLIST / ACCOUNT REGISTRATION ====================
+    async function submitWaitlist(e) {
+      e.preventDefault();
+      const btn = document.getElementById('wl-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'جاري التسجيل...';
+
+      const role = document.querySelector('input[name="wl_role"]:checked').value;
+      const full_name = document.getElementById('wl-name').value.trim();
+      const phone = document.getElementById('wl-phone').value.trim();
+      const area = document.getElementById('wl-area').value;
+      const budget = document.getElementById('wl-budget').value;
+
+      const { error } = await db.from('waitlist').insert([{ role, full_name, phone, area, budget }]);
+      if (error) {
+        btn.disabled = false;
+        btn.textContent = 'تسجيل وتفعيل الحساب مجاناً';
+        showToast('حدث خطأ أثناء التسجيل، يرجى المحاولة مرة أخرى.');
+        return;
+      }
+
+      // Save user locally so landlord phone numbers are unlocked immediately
+      setRegisteredUser({ full_name, phone, role, area });
+
+      const { count } = await db.from('waitlist').select('*', { count: 'exact', head: true });
+      const rank = (count || 1) + 100;
+      document.getElementById('wl-rank').textContent = '#' + rank;
+      document.getElementById('waitlist-form').classList.add('hidden');
+      document.getElementById('waitlist-success').classList.remove('hidden');
+      showToast('✅ تم تفعيل حسابك! يمكنك الآن إظهار أرقام جميع الملاك مجاناً.');
+    }
+
+    function shareOnWhatsApp() {
+      const text = encodeURIComponent('وفّر 20 دينار بدل المعاينة و5% عمولة السماسرة! سجّل معي في منصة إيجاركم لاستئجار شقق في عمّان من المالك مباشرة: ' + window.location.href);
+      window.open('https://wa.me/?text=' + text, '_blank');
+    }
+
+    // ==================== LOAD & RENDER LISTINGS ====================
+    async function loadListings() {
+      const container = document.getElementById('listings-container');
+      container.innerHTML = '<div class="text-center py-12 text-slate-500 font-bold">جاري تحميل الشقق المباشرة...</div>';
+
+      const { data, error } = await db
+        .from('listings')
+        .select('*')
+        .eq('status', 'active')
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = '<div class="bg-rose-50 text-rose-700 p-4 rounded-2xl text-center font-bold">تعذر تحميل الإعلانات حالياً.</div>';
+        return;
+      }
+
+      allListings = data || [];
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const area = document.getElementById('filter-area').value;
+      const group = document.getElementById('filter-group').value;
+      const maxRent = parseInt(document.getElementById('filter-max-rent').value, 10);
+
+      const filtered = allListings.filter(item => {
+        const matchArea = area === 'all' || item.area === area;
+        const matchGroup = group === 'all' || (item.target_group && item.target_group.includes(group));
+        const matchRent = item.rent_monthly <= maxRent;
+        return matchArea && matchGroup && matchRent;
+      });
+
+      renderListings(filtered);
+    }
+
+    function renderListings(list) {
+      const container = document.getElementById('listings-container');
+      const isLoggedIn = Boolean(getRegisteredUser());
+
+      if (!list.length) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-3">
+            <div class="text-4xl">🏘️</div>
+            <h3 class="text-lg font-black text-slate-900">لا توجد شقق مطابقة لهذا الفلتر حالياً</h3>
+            <p class="text-sm text-slate-600">جرّب اختيار «جميع مناطق عمّان» أو سجّل مواصفاتك ليصلك إشعار فور توفرها.</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(item => {
+        const savedMoney = Math.round(item.rent_monthly * 12 * 0.05 + 20);
+        const featuredBadge = item.is_featured
+          ? `<span class="inline-flex items-center gap-1 bg-amber-400 text-amber-950 text-xs font-black px-3 py-1 rounded-full shadow-sm">⭐ موثّق ميدانياً • أولوية ظهور</span>`
+          : '';
+        const cardClass = item.is_featured ? 'gold-card' : 'bg-white border border-slate-200';
+        const contactBtnLabel = isLoggedIn
+          ? '📞 تواصل مع المالك (معاينة مجانية)'
+          : '🔒 سجّل مجاناً لإظهار رقم المالك';
+
+        return `
+          <article class="${cardClass} rounded-3xl p-5 sm:p-6 shadow-sm space-y-4 transition">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                ${featuredBadge}
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full">✓ من المالك مباشرة — صفر عمولة</span>
+                <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">📍 ${escapeHtml(item.area)}</span>
+                <span class="bg-brand-50 text-brand-800 text-xs font-bold px-2.5 py-1 rounded-full">👥 ${escapeHtml(item.target_group)}</span>
+              </div>
+              <span class="text-xs font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
+                توفّر ${savedMoney} دينار عمولة ومعاينة
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 class="text-lg sm:text-xl font-black text-slate-900">${escapeHtml(item.title)}</h3>
+              <div class="text-right sm:text-left shrink-0">
+                <span class="text-2xl font-black text-brand-700">${item.rent_monthly}</span>
+                <span class="text-xs font-bold text-slate-600">دينار / شهرياً</span>
+                <p class="text-[11px] text-slate-500">التأمين المسترد: ${item.deposit || 0} دينار</p>
+              </div>
+            </div>
+
+            <!-- Transparency Card -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200/80 text-xs">
+              <div class="bg-white p-2.5 rounded-xl border border-slate-100">
+                <span class="text-slate-400 block font-bold">⚡ العدادات</span>
+                <span class="font-extrabold text-slate-800 mt-0.5 block">${escapeHtml(item.meters_type)}</span>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-100">
+                <span class="text-slate-400 block font-bold">🏢 رسوم الخدمات</span>
+                <span class="font-extrabold text-slate-800 mt-0.5 block">${escapeHtml(item.service_fees)}</span>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-100">
+                <span class="text-slate-400 block font-bold">🔥 التدفئة والتبريد</span>
+                <span class="font-extrabold text-slate-800 mt-0.5 block">${escapeHtml(item.heating_type)}</span>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-100">
+                <span class="text-slate-400 block font-bold">💧 خزانات المياه</span>
+                <span class="font-extrabold text-slate-800 mt-0.5 block">${escapeHtml(item.water_tank)}</span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+              <button onclick='openContactShield(${JSON.stringify(item).replace(/'/g, "&#39;")})' class="flex-1 sm:flex-none bg-brand-700 hover:bg-brand-800 text-white font-black px-6 py-3 rounded-xl text-sm shadow-sm transition">
+                ${contactBtnLabel}
+              </button>
+              <button onclick="openReportModal('${item.id}')" class="text-xs font-bold text-rose-600 hover:bg-rose-50 px-3.5 py-2.5 rounded-xl border border-rose-200 transition">
+                🚨 تبليغ: طلب رسوم معاينة أو سمسار
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // ==================== ADD LISTING (LANDLORD) ====================
+    async function submitListing(e) {
+      e.preventDefault();
+      const btn = document.getElementById('l-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'جاري فحص البيانات والنشر...';
+
+      const landlord_phone = document.getElementById('l-phone').value.trim();
+
+      // 1. Check Blacklist
+      const { data: blocked } = await db.from('blacklist').select('phone').eq('phone', landlord_phone);
+      if (blocked && blocked.length > 0) {
+        btn.disabled = false;
+        btn.textContent = 'نشر الشقة الآن';
+        showToast('⛔ عذراً، هذا الرقم محظور من النشر لمخالفته سياسة منع السماسرة.');
+        return;
+      }
+
+      const pkg = document.querySelector('input[name="l_package"]:checked').value;
+      const is_featured = pkg === 'featured';
+
+      const payload = {
+        title: document.getElementById('l-title').value.trim(),
+        area: document.getElementById('l-area').value,
+        rent_monthly: parseInt(document.getElementById('l-rent').value, 10),
+        deposit: parseInt(document.getElementById('l-deposit').value || '0', 10),
+        target_group: document.getElementById('l-group').value,
+        meters_type: document.getElementById('l-meters').value,
+        service_fees: document.getElementById('l-fees').value.trim(),
+        heating_type: document.getElementById('l-heating').value.trim(),
+        water_tank: document.getElementById('l-water').value.trim(),
+        landlord_name: document.getElementById('l-owner').value.trim(),
+        landlord_phone,
+        is_featured,
+        status: 'active'
+      };
+
+      const { error } = await db.from('listings').insert([payload]);
+      btn.disabled = false;
+      btn.textContent = 'نشر الشقة الآن';
+
+      if (error) {
+        showToast('حدث خطأ أثناء نشر الشقة، يرجى التحقق من الحقول.');
+        return;
+      }
+
+      document.getElementById('add-listing-form').reset();
+      if (is_featured) {
+        showToast('⭐ تم نشر شقتك بأولوية ظهور! سنتواصل معك لتنسيق موعد التصوير الميداني (20 دينار).');
+      } else {
+        showToast('✅ تم نشر شقتك مجاناً بنجاح!');
+      }
+      switchTab('listings');
+    }
+
+    // ==================== REGISTRATION GATE & PROTECTION SHIELD MODAL ====================
+    function openQuickRegisterOnly() {
+      selectedListing = null;
+      document.getElementById('modal-top-badge').className = 'inline-flex items-center gap-1.5 bg-brand-100 text-brand-900 text-xs font-black px-3 py-1 rounded-full';
+      document.getElementById('modal-top-badge').textContent = '🔐 تسجيل مجاني لمرة واحدة';
+      document.getElementById('shield-step-register').classList.remove('hidden');
+      document.getElementById('shield-step-1').classList.add('hidden');
+      document.getElementById('shield-step-2').classList.add('hidden');
+      document.getElementById('contact-modal').classList.remove('hidden');
+    }
+
+    function openContactShield(item) {
+      selectedListing = item;
+      const user = getRegisteredUser();
+
+      if (!user) {
+        // User is not registered yet -> show registration gate first
+        document.getElementById('modal-top-badge').className = 'inline-flex items-center gap-1.5 bg-brand-100 text-brand-900 text-xs font-black px-3 py-1 rounded-full';
+        document.getElementById('modal-top-badge').textContent = '🔐 تسجيل مجاني لإظهار الرقم';
+        document.getElementById('shield-step-register').classList.remove('hidden');
+        document.getElementById('shield-step-1').classList.add('hidden');
+        document.getElementById('shield-step-2').classList.add('hidden');
+        document.getElementById('contact-modal').classList.remove('hidden');
+        return;
+      }
+
+      // User is already registered -> proceed to protection shield
+      showProtectionStep();
+    }
+
+    async function submitQuickRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('qreg-submit-btn');
+      const full_name = document.getElementById('qreg-name').value.trim();
+      const phone = document.getElementById('qreg-phone').value.trim();
+
+      if (phone.replace(/\D/g, '').length < 9) {
+        showToast('يرجى إدخال رقم هاتف أردني صحيح.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'جاري تفعيل حسابك...';
+
+      // Check if phone is blacklisted as broker
+      const { data: blocked } = await db.from('blacklist').select('phone').eq('phone', phone);
+      if (blocked && blocked.length > 0) {
+        btn.disabled = false;
+        btn.textContent = 'تسجيل مجاني وإظهار رقم المالك الآن';
+        showToast('⛔ عذراً، هذا الرقم محظور لمخالفته سياسة منع السماسرة.');
+        return;
+      }
+
+      const targetArea = selectedListing ? selectedListing.area : 'عمّان';
+      await db.from('waitlist').insert([{
+        role: 'tenant',
+        full_name,
+        phone,
+        area: targetArea,
+        budget: 'مسجل لكشف أرقام الملاك'
+      }]);
+
+      setRegisteredUser({ full_name, phone, role: 'tenant', area: targetArea });
+
+      btn.disabled = false;
+      btn.textContent = 'تسجيل مجاني وإظهار رقم المالك الآن';
+      document.getElementById('qreg-name').value = '';
+      document.getElementById('qreg-phone').value = '';
+
+      // Refresh listing buttons so all cards now show unlocked state
+      if (allListings.length) applyFilters();
+
+      if (selectedListing) {
+        showToast('✅ تم التسجيل بنجاح!');
+        showProtectionStep();
+      } else {
+        closeModal('contact-modal');
+        showToast('✅ تم تفعيل حسابك! يمكنك الآن إظهار أرقام جميع الملاك مجاناً.');
+      }
+    }
+
+    function showProtectionStep() {
+      document.getElementById('modal-top-badge').className = 'inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 text-xs font-black px-3 py-1 rounded-full';
+      document.getElementById('modal-top-badge').textContent = '🛡️ تنبيه حماية قبل التواصل';
+      document.getElementById('shield-step-register').classList.add('hidden');
+      document.getElementById('shield-step-1').classList.remove('hidden');
+      document.getElementById('shield-step-2').classList.add('hidden');
+      document.getElementById('contact-modal').classList.remove('hidden');
+    }
+
+    function revealLandlordContact() {
+      if (!selectedListing || !getRegisteredUser()) return;
+      document.getElementById('modal-owner-name').textContent = selectedListing.landlord_name;
+      document.getElementById('modal-owner-phone').textContent = selectedListing.landlord_phone;
+      document.getElementById('modal-call-link').href = 'tel:' + selectedListing.landlord_phone;
+
+      let cleanPhone = selectedListing.landlord_phone.replace(/\D/g, '');
+      if (cleanPhone.startsWith('07')) {
+        cleanPhone = '962' + cleanPhone.substring(1);
+      }
+      const waMsg = encodeURIComponent(`مرحباً ${selectedListing.landlord_name}، شاهدت إعلان شقتك (${selectedListing.title}) على منصة إيجاركم بدون سماسرة، وأرغب بتحديد موعد لمعاينتها.`);
+      document.getElementById('modal-wa-link').href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
+
+      document.getElementById('shield-step-1').classList.add('hidden');
+      document.getElementById('shield-step-2').classList.remove('hidden');
+    }
+
+    // ==================== REPORT BROKER MODAL ====================
+    function openReportModal(id) {
+      reportingListingId = id;
+      document.getElementById('report-modal').classList.remove('hidden');
+    }
+
+    async function submitReport(e) {
+      e.preventDefault();
+      if (!reportingListingId) return;
+      const btn = document.getElementById('rep-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'جاري إرسال البلاغ...';
+
+      const reason = document.querySelector('input[name="rep_reason"]:checked').value;
+      const reporter_note = document.getElementById('rep-extra-note').value.trim();
+
+      await db.from('reports').insert([{ listing_id: reportingListingId, reason, reporter_note }]);
+
+      btn.disabled = false;
+      btn.textContent = 'إرسال البلاغ وإخفاء الإعلان';
+      closeModal('report-modal');
+      document.getElementById('rep-extra-note').value = '';
+
+      allListings = allListings.filter(item => item.id !== reportingListingId);
+      applyFilters();
+      showToast('🛡️ شكراً لوعيك! تم تسجيل البلاغ لحماية المستأجرين.');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // ==================== TOOLKIT FUNCTIONS ====================
+    function updateChecklist() {
+      const total = document.querySelectorAll('.chk-item').length;
+      const checked = document.querySelectorAll('.chk-item:checked').length;
+      document.getElementById('checklist-progress').textContent = `${checked} / ${total} مفحوص`;
+    }
+
+    function sendMoveInWhatsApp() {
+      const apt = document.getElementById('rep-apt').value.trim() || 'الشقة المستأجرة';
+      const dep = document.getElementById('rep-deposit').value.trim() || 'غير محدد';
+      const notes = document.getElementById('rep-notes').value.trim() || 'تم فحص الشقة واستلامها بحالة جيدة.';
+      const today = new Date().toLocaleDateString('ar-JO');
+      const msg = encodeURIComponent(
+        `*محضر استلام شقة موثّق عبر منصة إيجاركم*\n` +
+        `📅 التاريخ: ${today}\n` +
+        `🏠 العقار: ${apt}\n` +
+        `💰 مبلغ التأمين المسترد: ${dep}\n` +
+        `📝 ملاحظات الحالة عند الاستلام:\n${notes}`
+      );
+      window.open('https://wa.me/?text=' + msg, '_blank');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Initialize areas, user state, and default tab
+    populateAreaDropdowns();
+    updateUserUIState();
+    switchTab('home');
+  </script>
+</body>
+</html>
